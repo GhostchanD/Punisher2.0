@@ -6,7 +6,7 @@ authors: [ gosuto ]
 description: Punisher
 commands:
   punisher:
-    usage: /punisher <ban|help> [args]
+    usage: /punisher <ban|help>
     description: Punish a player
     permission: punisher.admin
 permissions:

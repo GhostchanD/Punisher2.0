@@ -79,8 +79,6 @@ public class BanSubCommand implements SubCommand {
                         sender.sendMessage(ChatColor.RED + "That player is already banned");
                         return;
                     }
-                    if (target.isOnline()) {
-                        Objects.requireNonNull(target.getPlayer()).kickPlayer(ChatColor.DARK_RED + "» " + ChatColor.RED + "You have a banned \n" + ChatColor.DARK_RED + "» " + ChatColor.RED + "Reason: " + args[2] + "!\n" + ChatColor.DARK_RED + "» " + ChatColor.RED + "Expire: " + args[3]);                    }
                     // set/save config
                     Calendar cl = Calendar.getInstance();
                     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd-HH");
@@ -204,13 +202,15 @@ public class BanSubCommand implements SubCommand {
                     if(str.equals("never")) {
                         str2 = "never";
                     } else {
-                        if (timeban) {
+                        if (!timeban) {
                             str2 = "never";
                             sender.sendMessage(ChatColor.RED + "BAN期限が読み取れなかったため無期限BANを実行しました");
                         } else {
                             str2 = sdf.format(cl.getTime());
                         }
                     }
+                    if (target.isOnline()) {
+                        Objects.requireNonNull(target.getPlayer()).kickPlayer(ChatColor.DARK_RED + "» " + ChatColor.RED + "You have a banned \n" + ChatColor.DARK_RED + "» " + ChatColor.RED + "Reason: " + args[2] + "!\n" + ChatColor.DARK_RED + "» " + ChatColor.RED + "Expire: " + str2);                    }
                     config.set(uuid + ".banned", true);
                     config.set(uuid + ".reason", args[2]);
                     config.set(uuid + ".time", str2);
