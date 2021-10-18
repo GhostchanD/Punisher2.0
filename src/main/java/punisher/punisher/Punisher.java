@@ -15,7 +15,6 @@ import java.text.ParseException;
 
 import java.util.Objects;
 public final class Punisher extends JavaPlugin implements Listener {
-    public static final SimpleDateFormat FORMAT = new SimpleDateFormat("yyyy/MM/dd/HH:mm");
 
     private static Punisher instance;
 
@@ -25,7 +24,6 @@ public final class Punisher extends JavaPlugin implements Listener {
     @Override
     public void onEnable() {
         saveDefaultConfig();
-        FileConfiguration config = getConfig();
         Punisher.instance = this;
         Objects.requireNonNull(getCommand("punisher")).setExecutor(new PunisherCommandExecutor());
         getServer().getPluginManager().registerEvents(this, this);
@@ -41,23 +39,29 @@ public final class Punisher extends JavaPlugin implements Listener {
         }
         String banned = getConfig().getString(e.getPlayer().getUniqueId() + ".banned");
         if (Objects.equals(banned, "false")) return ;
-        Date date = new Date();
+        String reason = getConfig().getString(e.getPlayer().getUniqueId() + ".reason");
         String time = getConfig().getString(e.getPlayer().getUniqueId() + ".time");
+        if (Objects.equals(time, "never")) {
+            Objects.requireNonNull(e.getPlayer()).kickPlayer(ChatColor.DARK_RED + "» " + ChatColor.RED + "You have a banned \n" + ChatColor.DARK_RED + "» " + ChatColor.RED + "Reason: " + reason + "!\n" + ChatColor.DARK_RED + "» " + ChatColor.RED + "Expire: Not Expire");
+            return;
+        }
         Calendar cl = Calendar.getInstance();
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd-HH-mm");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd-HH");
         String str = sdf.format(cl.getTime());
         getLogger().info(time + str);
-        SimpleDateFormat checkformat = new SimpleDateFormat("yyyy-MM-dd-HH-mm");
+        SimpleDateFormat checkformat = new SimpleDateFormat("yyyy-MM-dd-HH");
         try {
             Date date1 = checkformat.parse(time);
             Date date2 = checkformat.parse(str);
             if (date1.before(date2)) {
+                FileConfiguration config = Punisher.getInstance().getConfig();
+                config.set(uuid + ".banned", false);
                 return;
             }
         } catch (ParseException ex) {
             ex.printStackTrace();
         }
-        Objects.requireNonNull(e.getPlayer()).kickPlayer(ChatColor.DARK_RED + "» " + ChatColor.RED + "You have a banned by " + banned + "!");
+        Objects.requireNonNull(e.getPlayer()).kickPlayer(ChatColor.DARK_RED + "» " + ChatColor.RED + "You have a banned \n" + ChatColor.DARK_RED + "» " + ChatColor.RED + "Reason: " + reason + "!\n" + ChatColor.DARK_RED + "» " + ChatColor.RED + "Expire: " + time);
 
     }
     @EventHandler

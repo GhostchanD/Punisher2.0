@@ -11,7 +11,6 @@ import punisher.punisher.Punisher;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.Objects;
 
 
@@ -81,24 +80,23 @@ public class BanSubCommand implements SubCommand {
                         return;
                     }
                     if (target.isOnline()) {
-                        target.getPlayer().kickPlayer(ChatColor.DARK_RED + "» " + ChatColor.RED + "You are banned by " + sender.getName() + " Reason: " + args[2] + "!");
-                    }
+                        Objects.requireNonNull(target.getPlayer()).kickPlayer(ChatColor.DARK_RED + "» " + ChatColor.RED + "You have a banned \n" + ChatColor.DARK_RED + "» " + ChatColor.RED + "Reason: " + args[2] + "!\n" + ChatColor.DARK_RED + "» " + ChatColor.RED + "Expire: " + args[3]);                    }
                     // set/save config
-                    Date date = new Date();
                     Calendar cl = Calendar.getInstance();
-                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd-HH-mm");
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd-HH");
                     FileConfiguration config = Punisher.getInstance().getConfig();
                     String uuid = target.getUniqueId().toString();
                     String str = args[3];
-                    int yn = str.indexOf("y");
-                    int ynb = 1;
-                    int yn4 = 0;
+                    String str2;
+                    boolean timeban = false;
                     if (str.contains("y")) {
-                        sender.sendMessage("okay loaded y");
+                        timeban = true;
+                        int yn = str.indexOf("y");
+                        int ynb = 1;
+                        int yn4 = 0;
                         int i = 0;
                         while (i < 1) {
                             int yn2 = yn - 1;
-                            sender.sendMessage(String.valueOf(yn2));
                             if(yn2 == -1) {
                                 cl.add(Calendar.YEAR, yn4);
                                 break;
@@ -106,7 +104,6 @@ public class BanSubCommand implements SubCommand {
                             char yn3 = str.charAt(yn2);
                             if(Character.isDigit(yn3)) {
                                 int result = intparse(yn3);
-                                sender.sendMessage("get result"+ result);
                                 yn4 += result * ynb;
                                 yn = yn - 1;
                                 ynb = ynb*10;
@@ -120,11 +117,100 @@ public class BanSubCommand implements SubCommand {
                             }
                         }
                     }
-                    cl.add(Calendar.MONTH, 0);
-                    cl.add(Calendar.DAY_OF_MONTH, 0);
-                    cl.add(Calendar.HOUR, 0);
-                    cl.add(Calendar.MINUTE, 0);
-                    String str2 = sdf.format(cl.getTime());
+                    if (str.contains("m")) {
+                        timeban = true;
+                        int mn = str.indexOf("m");
+                        int mnb = 1;
+                        int mn4 = 0;
+                        int i = 0;
+                        while (i < 1) {
+                            int mn2 = mn - 1;
+                            if(mn2 == -1) {
+                                cl.add(Calendar.MONTH, mn4);
+                                break;
+                            }
+                            char mn3 = str.charAt(mn2);
+                            if(Character.isDigit(mn3)) {
+                                int result = intparse(mn3);
+                                mn4 += result * mnb;
+                                mn = mn - 1;
+                                mnb = mnb*10;
+                                if(mn3 == 0) {
+                                    cl.add(Calendar.MONTH, mn4);
+                                    break;
+                                }
+                            } else {
+                                cl.add(Calendar.MONTH, mn4);
+                                break;
+                            }
+                        }
+                    }
+                    if (str.contains("d")) {
+                        timeban = true;
+                        int dn = str.indexOf("d");
+                        int dnb = 1;
+                        int dn4 = 0;
+                        int i = 0;
+                        while (i < 1) {
+                            int dn2 = dn - 1;
+                            if(dn2 == -1) {
+                                cl.add(Calendar.DAY_OF_MONTH , dn4);
+                                break;
+                            }
+                            char dn3 = str.charAt(dn2);
+                            if(Character.isDigit(dn3)) {
+                                int result = intparse(dn3);
+                                dn4 += result * dnb;
+                                dn = dn - 1;
+                                dnb = dnb*10;
+                                if(dn3 == 0) {
+                                    cl.add(Calendar.DAY_OF_MONTH, dn4);
+                                    break;
+                                }
+                            } else {
+                                cl.add(Calendar.DAY_OF_MONTH, dn4);
+                                break;
+                            }
+                        }
+                    }
+                    if (str.contains("h")) {
+                        timeban = true;
+                        int hn = str.indexOf("h");
+                        int hnb = 1;
+                        int hn4 = 0;
+                        int i = 0;
+                        while (i < 1) {
+                            int hn2 = hn - 1;
+                            if(hn2 == -1) {
+                                cl.add(Calendar.HOUR, hn4);
+                                break;
+                            }
+                            char hn3 = str.charAt(hn2);
+                            if(Character.isDigit(hn3)) {
+                                int result = intparse(hn3);
+                                hn4 += result * hnb;
+                                hn = hn - 1;
+                                hnb = hnb*10;
+                                if(hn3 == 0) {
+                                    cl.add(Calendar.HOUR, hn4);
+                                    break;
+                                }
+                            } else {
+                                cl.add(Calendar.HOUR, hn4);
+                                break;
+                            }
+                        }
+                    }
+                    if(str.equals("never")) {
+                        str2 = "never";
+                    } else {
+                        if (timeban) {
+                            str2 = "never";
+                            sender.sendMessage(ChatColor.RED + "BAN期限が読み取れなかったため無期限BANを実行しました");
+                        } else {
+                            str2 = sdf.format(cl.getTime());
+                        }
+                    }
                     config.set(uuid + ".banned", true);
                     config.set(uuid + ".reason", args[2]);
                     config.set(uuid + ".time", str2);

@@ -15,7 +15,8 @@ public final class PunisherCommandExecutor implements CommandExecutor, Listener 
             new BanSubCommand(),
             new UnbanSubCommand(),
             new KickSubCommand(),
-            new HelpSubCommand()
+            new HelpSubCommand(),
+            new BanlistSubCommand()
     };
 
     private void showHelp(CommandSender sender) {
