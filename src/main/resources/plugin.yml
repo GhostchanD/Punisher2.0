@@ -1,0 +1,14 @@
+name: Punisher
+version: '${project.version}'
+main: punisher.punisher.Punisher
+api-version: 1.17
+authors: [ gosuto ]
+description: Punisher
+commands:
+  punisher:
+    usage: /punisher <ban|help> [args]
+    description: Punish a player
+    permission: punisher.admin
+permissions:
+  punisher.admin:
+    default: op
